@@ -1,20 +1,25 @@
-def age_check(age):
+def plus(a, b):
+    return calculator(a, b, "+")
+
+
+def calculator(a, b, math):
     try:
-        print(f'your age {age}')
-        if age < 18:
-            print("you cant drink")
-        else:
-            print("enjoy your drink")
+        a = int(a)
+        b = int(b)
+        if math == "+":
+            return "{0} + {1}의 결과물은 {2}".format(a, b, a+b)
     except:
-        return None
+        return "please enter a number"
 
 
-age_check(19)
-age_check(14)
+def negation(a):
+    if a.isdecimal():
+        a = int(a)
+        return a*-1
+    else:
+        return "please enter a number"
 
-y = [10, 20, 30]
-try:
-    index, x = map(int, input("값을 넣으세요 : ").split())
-    print(y[index] / x)
-except ZeroDivisionError:
-    print("do not input zero(0)")
+
+print(plus(10, 10))
+# print(negation("law"))
+# print(negation("10"))
