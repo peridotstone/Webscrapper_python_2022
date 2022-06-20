@@ -1,20 +1,41 @@
 import requests
 import warnings
 from bs4 import BeautifulSoup
-
 warnings.filterwarnings("ignore")
 
-indeed_result = requests.get(
-    "https://www.indeed.com/jobs?q=python&limit=50", verify=False, timeout=3)
+INDEED_URL = "https://www.indeed.com"
+INDEED_Query_pythonjobs = "/jobs?q=python"
 
-indeed_soup = BeautifulSoup(indeed_result.text, "html.parser")
 
-pagination = indeed_soup.find("div", {"class":"pagination"})
+def find_last_page(str_URL, str_query):
+    is_last_page = False
+    start = 20
+    page_count = 0
 
-pages = pagination.find_all('a')
-spans=[]
+    while not is_last_page:
 
-for page in pages:
-    spans.append(page.find("span"))
-    
-print(spans[:-1])
+        chk_URL = f'{str_URL}{str_query}&start={start+50}'
+        indeed_requests = requests.get(chk_URL, verify=False, timeout=3)
+        indeed_soup = BeautifulSoup(indeed_requests.text, "html.parser")
+        pagination = indeed_soup.find("div", {"class": "pagination"})
+        if not pagination is None:
+            pages = pagination.find_all('li')
+        else:
+            continue
+
+        for i in range(len(pages)):
+            page_count += 1
+            chk_page = pages[i].find()['aria-label']
+
+            if len(pages) == 7:
+                page_count -= 2
+
+            if not pages[i].find()['aria-label'] == "Next":
+                is_last_page = True
+                break
+
+    print(f'recent page_count : {page_count}')
+    return page_count - 2
+
+
+print(find_last_page(INDEED_URL, INDEED_Query_pythonjobs))
