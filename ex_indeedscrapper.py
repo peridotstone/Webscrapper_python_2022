@@ -54,4 +54,7 @@ def extract_pages():
 
 
 def get_page(page_index):
-    return requests.get(URL + f'&start={(page_index + 1) * LIMIT}')
+    return requests.get(URL + f'&start={(page_index + 1) * LIMIT}', verify=False)
+
+
+extract_pages()

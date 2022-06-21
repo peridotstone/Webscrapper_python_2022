@@ -3,39 +3,46 @@ import warnings
 from bs4 import BeautifulSoup
 warnings.filterwarnings("ignore")
 
-INDEED_URL = "https://www.indeed.com"
-INDEED_Query_pythonjobs = "/jobs?q=python"
+
+PAGE_LIMIT = 50
+INDEED_URL_start = f"https://www.indeed.com/jobs?q=python&start="
 
 
-def find_last_page(str_URL, str_query):
-    is_last_page = False
-    start = 20
-    page_count = 0
+def parsing_web(str_url):
+    indeed_rq = requests.get(str_url, verify=False)
+    indeed_soup = BeautifulSoup(indeed_rq.text, "html.parser")
+    pagination = indeed_soup.find("div", {"class": "pagination"})
+    pages = pagination.find_all("li")
 
-    while not is_last_page:
+    return pages
 
-        chk_URL = f'{str_URL}{str_query}&start={start+50}'
-        indeed_requests = requests.get(chk_URL, verify=False, timeout=3)
-        indeed_soup = BeautifulSoup(indeed_requests.text, "html.parser")
-        pagination = indeed_soup.find("div", {"class": "pagination"})
-        if not pagination is None:
-            pages = pagination.find_all('li')
-        else:
+
+def find_end_of_page():
+    search_index = 0
+    end_page_num = 0
+    is_end_of_page = False
+
+    while not is_end_of_page:
+        try:
+            temp_parser_pages = parsing_web(
+                f"{INDEED_URL_start}{PAGE_LIMIT*search_index}")
+
+            if temp_parser_pages[-1].find()["aria-label"] != "Next":
+                is_end_of_page = True
+                break
+            elif temp_parser_pages[1].find()["aria-label"] == "Previous":
+                pass
+            else:
+                for i in range(len(temp_parser_pages)):
+                    page = temp_parser_pages[i].find().string
+                    page_num = int(page) if page is not None else False
+                    end_page_num = page_num if end_page_num < page_num else end_page_num
+                    print(f'please : {end_page_num}')
+                search_index += 1
+        except:
             continue
 
-        for i in range(len(pages)):
-            page_count += 1
-            chk_page = pages[i].find()['aria-label']
-
-            if len(pages) == 7:
-                page_count -= 2
-
-            if not pages[i].find()['aria-label'] == "Next":
-                is_last_page = True
-                break
-
-    print(f'recent page_count : {page_count}')
-    return page_count - 2
+    return end_page_num-1
 
 
-print(find_last_page(INDEED_URL, INDEED_Query_pythonjobs))
+end_of_page = 66
