@@ -8,7 +8,7 @@ PAGE_LIMIT = 50
 INDEED_URL_start = f"https://www.indeed.com/jobs?q=python&start="
 
 
-def parsing_web(str_url):
+def parsing_pages(str_url):
     indeed_rq = requests.get(str_url, verify=False)
     indeed_soup = BeautifulSoup(indeed_rq.text, "html.parser")
     pagination = indeed_soup.find("div", {"class": "pagination"})
@@ -24,7 +24,7 @@ def find_end_of_page():
 
     while not is_end_of_page:
         try:
-            temp_parser_pages = parsing_web(
+            temp_parser_pages = parsing_pages(
                 f"{INDEED_URL_start}{PAGE_LIMIT*search_index}")
 
             if temp_parser_pages[-1].find()["aria-label"] != "Next":
@@ -45,4 +45,20 @@ def find_end_of_page():
     return end_page_num-1
 
 
+# end_of_page = 66
 end_of_page = 66
+jobtitle = []
+
+for i in range(end_of_page):
+    try:
+        indeed_rq2 = requests.get(
+            f"{INDEED_URL_start}{PAGE_LIMIT*i}", verify=False)
+        indeed_soup = BeautifulSoup(indeed_rq2.text, "html.parser")
+        jobs = indeed_soup.find_all(
+            "div", {"class": "mosaic-zone"})
+
+        print(len(jobs))
+
+    except Exception as error:
+        print(error)
+        continue
