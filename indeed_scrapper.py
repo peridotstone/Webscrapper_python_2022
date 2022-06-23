@@ -46,18 +46,36 @@ def find_end_of_page():
 
 
 # end_of_page = 66
-end_of_page = 66
+end_of_page = 1
 jobtitle = []
-
+companytitle = []
+locationtitle = []
+job_id = []
 for i in range(end_of_page):
     try:
         indeed_rq2 = requests.get(
             f"{INDEED_URL_start}{PAGE_LIMIT*i}", verify=False)
         indeed_soup = BeautifulSoup(indeed_rq2.text, "html.parser")
-        jobs = indeed_soup.find_all(
-            "div", {"class": "mosaic-zone"})
 
-        print(len(jobs))
+        jobs = indeed_soup.find(
+            "ul", {"class": "jobsearch-ResultsList"}).find_all("a", {"class": "jcs-JobTitle"})
+        jobtitle += [jobs[i].string for i in range(
+            len(jobs)) if jobs[i].string]
+
+        companies = indeed_soup.find(
+            "ul", {"class": "jobsearch-ResultsList"}).find_all("span", {"class": "companyName"})
+        companytitle += [companies[i].string for i in range(
+            len(companies)) if companies[i].string]
+
+        locations = indeed_soup.find(
+            "ul", {"class": "jobsearch-ResultsList"}).find_all("div", {"class": "companyLocation"})
+        locationtitle += [locations[i].string for i in range(
+            len(locations)) if locations[i].string]
+
+        job_ids = indeed_soup.find(
+            "ul", {"class": "jobsearch-ResultsList"}).find_all("a", {"class": "jcs-JobTitle"})
+        job_id += [job_ids[i]["data-jk"] for i in range(
+            len(job_ids)) if job_ids[i]["data-jk"]]
 
     except Exception as error:
         print(error)
