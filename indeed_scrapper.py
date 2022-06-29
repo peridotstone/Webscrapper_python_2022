@@ -51,6 +51,8 @@ jobtitle = []
 companytitle = []
 locationtitle = []
 job_id = []
+
+
 for i in range(end_of_page):
     try:
         indeed_rq2 = requests.get(
@@ -80,3 +82,8 @@ for i in range(end_of_page):
     except Exception as error:
         print(error)
         continue
+
+print(jobtitle)
+print(companytitle)
+print(locationtitle)
+print(job_id)
