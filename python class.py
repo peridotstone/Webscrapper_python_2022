@@ -4,7 +4,6 @@ class car:
         self.windows = 4
         self.color = kwargs.get("color", "black")
         self.mupler = kwargs.get("mupler", 1)
-        print(kwargs)
 
     def start(self):
         print(f"I Started")
